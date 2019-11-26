@@ -24,6 +24,55 @@ type task struct {
 	Status   string `json:"status"`
 }
 
+func networkinfo(inp string) {
+	totalcommand := strings.Split(inp, " ")
+	cmd := totalcommand[0]
+	//fmt.Println(totalcommand)
+	//os.Exit(1)
+
+	switch cmd {
+	case "network_info":
+		fmt.Print("Requested network info\n")
+		command := exec.Command("bash", "-c", "ifconfig")
+		out, err := command.CombinedOutput()
+		if err != nil {
+			fmt.Printf("cmd.Run() failed with %s\n", err)
+		}
+		fmt.Printf("Output: \n%s", string(out))
+
+	case "dns":
+		fmt.Print("Requested DNS lookup\n")
+		newcmd := "dig" + " " + totalcommand[1]
+		command := exec.Command("bash", "-c", newcmd)
+		out, err := command.CombinedOutput()
+		if err != nil {
+			fmt.Printf("cmd.Run() failed with %s\n", err)
+		}
+		fmt.Printf("Output: \n%s", string(out))
+
+	case "lookup":
+		fmt.Print("Request to nslookup query\n")
+		newcmd := "nslookup" + " " + totalcommand[1]
+		command := exec.Command("bash", "-c", newcmd)
+		out, err := command.CombinedOutput()
+		if err != nil {
+			fmt.Printf("cmd.Run() failed with %s\n", err)
+		}
+		fmt.Printf("Output: \n%s", string(out))
+	case "review":
+		fmt.Print("Request to review network connections\n")
+		newcmd := "netstat"
+		command := exec.Command("bash", "-c", newcmd)
+		out, err := command.CombinedOutput()
+		if err != nil {
+			fmt.Printf("cmd.Run() failed with %s\n", err)
+		}
+		fmt.Printf("Output: \n%s", string(out))
+
+	}
+
+}
+
 func addtask(name string, duration int) {
 	newtask := &task{name, duration, "Not done"}
 	db, err := os.Open(dbfile)
@@ -110,20 +159,6 @@ func listtasks() {
 	fmt.Printf("All tasks listed out...")
 }
 
-func networkinfo(cmd string) {
-	if cmd == "networks_around" {
-		command := exec.Command("netsh wlan show networks")
-		command.Stdout = os.Stdout
-		command.Stderr = os.Stderr
-
-		err := command.Run()
-		if err != nil {
-			fmt.Printf("An unexpected error occured :%v", err)
-		}
-	}
-
-}
-
 func main() {
 	flag.Parse()
 
@@ -153,7 +188,7 @@ func main() {
 		completetask(ntask)
 
 	case "network":
-		networkcmd := flag.Arg(1)
+		networkcmd := strings.Join(flag.Args()[1:], " ")
 		networkinfo(networkcmd)
 
 	}
