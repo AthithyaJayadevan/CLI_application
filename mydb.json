@@ -1,0 +1,17 @@
+[
+ {
+  "name": "do dishes 20",
+  "Duration": 20,
+  "status": "Not done"
+ },
+ {
+  "name": "learn golang thoroughly",
+  "Duration": 30,
+  "status": "Not done"
+ },
+ {
+  "name": "implement a SQL project in golang",
+  "Duration": 20,
+  "status": "Not done"
+ }
+]
